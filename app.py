@@ -40,8 +40,8 @@ with ui.sidebar(open="open"):
     
     #create a checkbox group input to filter the species
     ui.input_checkbox_group(
-        "selected_species",
-        "Species in Scatterplot",
+        "selected_species_list",
+        "Select Species",
         ["Adelie", 
          "Gentoo", 
          "Chinstrap"],
