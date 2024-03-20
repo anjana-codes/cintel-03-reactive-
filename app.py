@@ -1,12 +1,14 @@
-
-
 import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-import palmerpenguins  # This package provides the Palmer Penguins dataset
-import pandas as pd
-import seaborn as sns # This package provides the Seaborn dataset
 from shiny import reactive, render, req
+import palmerpenguins
+import seaborn as sns
+import pandas as pd
+import shinyswatch
+
+# Theme
+shinyswatch. theme.darkly()
 
 #Use the built-in function to load Palmer Penguins Dataset
 penguins_df= palmerpenguins.load_penguins()
@@ -31,8 +33,7 @@ with ui.sidebar(open="open"):
        "Select Sex",
         ["male", "female"],
     )
-
-  #create a numeric input for the number of Plotly histogram bins
+ #create a numeric input for the number of Plotly histogram bins
     ui.input_numeric("plotly_bin_count", "Number of Plotly bins", 45)
     
     #create a slider input for the number of Seaborn bins
@@ -46,10 +47,9 @@ with ui.sidebar(open="open"):
         ["Adelie", 
          "Gentoo", 
          "Chinstrap"],
-        selected=["Gentoo"],
+        selected=["Adelie", "Gentoo", "Chinstrap"],
         inline=False,
     )
-
     
 # Adds a hyperlink to GitHub Repo
     ui.a(
@@ -62,12 +62,12 @@ with ui.accordion(id="acc", open="closed"):
     with ui.accordion_panel("Data Table"):
         @render.data_frame
         def penguin_datatable():
-            return render.DataTable(filtered_data())
+            return render.DataTable( filtered_data())
 
     with ui.accordion_panel("Data Grid"):
         @render.data_frame
         def penguin_datagrid():
-            return render.DataGrid(filtered_data())
+            return render.DataGrid( filtered_data())
 
 #Plotly Histogram
 with ui.navset_card_tab(id="tab"):
@@ -77,7 +77,7 @@ with ui.navset_card_tab(id="tab"):
          @render_plotly
          def plotly_histogram():
             plotly_hist = px.histogram(
-                data_frame=filtered_data(),
+                data_frame= filtered_data(),
                 x=input.selected_attribute(),
                 nbins=input.plotly_bin_count(),
                 color="species",
@@ -94,7 +94,7 @@ with ui.navset_card_tab(id="tab"):
         @render.plot
         def seaborn_histogram():
            seaborn_plot = sns.histplot(
-                data=filtered_data(),
+                data= filtered_data(),
                 x=input.selected_attribute(),
                 bins=input.seaborn_bin_count(),
                 multiple="dodge",
@@ -113,7 +113,7 @@ with ui.navset_card_tab(id="tab"):
         @render_plotly
         def plotly_scatterplot():
             return px.scatter(
-                filtered_data(),
+                 filtered_data(),
                 x="body_mass_g",
                 y="bill_length_mm",
                 color="species",
@@ -123,14 +123,35 @@ with ui.navset_card_tab(id="tab"):
                      'Gentoo': 'green'},
             )
 
-      # --------------------------------------------------------
-# Reactive calculations and effects
-# --------------------------------------------------------
 
-# Add a reactive calculation to filter the data
-# By decorating the function with @reactive, we can use the function to filter the data
-# The function will be called whenever an input functions used to generate that output changes.
-# Any output that depends on the reactive function (e.g., filtered_data()) will be updated when the data changes.
-    @reactive.calc
-    def filtered_data():
-        return penguins_df[penguins_df["species"].isin(input.selected_species_list())]
+
+    with ui.nav_menu("Pie Chart"):
+        with ui.nav_panel("Pie Chart"):
+            species_distribution = penguins_df["species"].value_counts().reset_index()
+            species_distribution.columns = ["species", "count"]
+            @render_plotly
+            def pie_chart():
+                return px.pie(
+                    species_distribution,
+                    values="count",
+                    names="species",
+                    title="Species Distribution",
+                    color="species",
+                    color_discrete_map={
+                     'Adelie': 'yellow',
+                     'Chinstrap': 'brown',
+                     'Gentoo': 'green'} 
+
+                )
+ # Reactive calculations and effects
+    # --------------------------------------------------------
+
+    # Add a reactive calculation to filter the data
+    # By decorating the function with @reactive, we can use the function to filter the data
+    # The function will be called whenever an input function used to generate that output changes.
+    # Any output that depends on the reactive function (e.g., filtered_data()) will be updated when the data changes.
+
+
+        @reactive.calc
+        def filtered_data():
+         return penguins_df[penguins_df["species"].isin(input.selected_species_list())]
