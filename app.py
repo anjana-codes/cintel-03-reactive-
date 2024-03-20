@@ -47,7 +47,7 @@ with ui.sidebar(open="open"):
         ["Adelie", 
          "Gentoo", 
          "Chinstrap"],
-        selected=["Adelie", "Gentoo", "Chinstrap"],
+        selected=["Gentoo"],
         inline=False,
     )
     
@@ -131,7 +131,7 @@ with ui.navset_card_tab(id="tab"):
             species_distribution.columns = ["species", "count"]
             @render_plotly
             def pie_chart():
-                return px.pie(
+                return px. pie(
                     species_distribution,
                     values="count",
                     names="species",
@@ -150,7 +150,6 @@ with ui.navset_card_tab(id="tab"):
     # By decorating the function with @reactive, we can use the function to filter the data
     # The function will be called whenever an input function used to generate that output changes.
     # Any output that depends on the reactive function (e.g., filtered_data()) will be updated when the data changes.
-
 
         @reactive.calc
         def filtered_data():
