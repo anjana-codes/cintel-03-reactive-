@@ -18,7 +18,7 @@ ui.page_opts(title="Penguins Data - Anjana", fillable=True)
 
 # creates sidebar for user interaction
 with ui.sidebar(open="open"):
-    ui.h5("Sidebar")
+    ui.h2("Sidebar")
     
     # Creates a dropdown input to choose a column 
     ui.input_selectize(
@@ -71,7 +71,7 @@ with ui.sidebar(open="open"):
 
 with ui.layout_columns():        
     with ui.card(full_screen=True):
-        ui.h6("Penguins DataTable")
+        ui.h2("Penguins DataTable")
         
 
         @render.data_frame
@@ -80,7 +80,7 @@ with ui.layout_columns():
 
 # Creates a DataGrid showing all data      
     with ui.card(full_screen=True):
-        ui.h6("Penguins DataGrid")
+        ui.h2("Penguins DataGrid")
 
         @render.data_frame
         def penguins_datagrid():
