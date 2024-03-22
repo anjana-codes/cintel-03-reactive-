@@ -154,7 +154,7 @@ with ui.card(full_screen=True):
             seaborn_barplot = sns.barplot(
                 data=filtered_data(),
                 x='island',
-                y='year',
+                y='body_mass_g',
                 hue='species',
                  palette={
                      'Adelie': 'yellow',
